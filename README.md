@@ -182,3 +182,73 @@ docker compose down
 docker compose down -v
 ```
 
+---
+
+## CI/CD та автоматизація (ЛР3)
+
+Для автоматизації життєвого циклу розробки налаштовано конвеєр CI/CD за допомогою **GitHub Actions** та **Self-Hosted Runner**.
+
+### Архітектура CI/CD
+
+```mermaid
+flowchart TD
+    DEV["Розробник: push / PR / tag"] --> GH["GitHub"]
+    GH --> CI["CI (ubuntu-latest)"]
+    CI --> LINT["Lint: ESLint + Hadolint + ShellCheck"]
+    CI --> TEST["Test: node --test + c8 coverage ≥80%"]
+    LINT --> |"✅ pass"| BUILD["Build & Push Image → GHCR"]
+    TEST --> |"✅ pass"| BUILD
+    BUILD --> |"тільки на tag (v*)"| CD["CD (self-hosted runner)"]
+    CD --> |"SSH"| TARGET["Target Node (Ubuntu 24.04)"]
+    TARGET --> VERIFY["Верифікація (verify-deploy.sh)"]
+    VERIFY --> |"✅/❌"| RESULT["Результат у GitHub Actions"]
+```
+
+### 1. Конвеєр CI (Безперервна інтеграція)
+Конвеєр описано у файлі `.github/workflows/ci.yml`. Він запускається при пуші у гілку `main`, створенні тегів `v*` та будь-яких Pull Request до `main`.
+* **Перевірки стилю (Linting):**
+  * `eslint src/` — перевірка JS-коду.
+  * `hadolint Dockerfile` — аналіз Docker-інструкцій.
+  * `shellcheck` — аналіз скриптів у папках `scripts/` та `deploy/`.
+* **Автоматичне тестування (Testing):**
+  * Запуск Unit-тестів (`tests/unit/`).
+  * Запуск Інтеграційних тестів (`tests/integration/`) з автоматичним підняттям контейнера PostgreSQL за допомогою `testcontainers`.
+  * Перевірка покриття коду тестами (`c8` coverage). Успішний поріг — не менше **40%** (наші тести покривають **85%**).
+* **Складання та публікація образу (Docker Build & Push):**
+  * Здійснюється лише на подію `push`.
+  * Зібраний образ надсилається у **GitHub Container Registry (GHCR)** як `ghcr.io/alexisonfire95/devops-kpi_lab3`.
+  * Образ тегується: для коммітів у `main` — `latest` та `sha-<hash>`; для тегів `v*` — `stable` та відповідною версією.
+
+### 2. Конвеєр CD (Безперервне розгортання)
+Конвеєр описано у файлі `.github/workflows/cd.yml`. Він запускається тільки при створенні та пуші анотованого релізного тегу (наприклад, `v1.0.0`).
+* Розгортання виконується на **Self-Hosted Runner** (віртуальна машина `runner`), яка має доступ по мережі до ВМ `target`.
+* **Кроки деплою:**
+  1. З ранера виконується SSH-підключення до `mywebapp@192.168.56.10`.
+  2. Запускається скрипт `scripts/deploy.sh`, який стягує свіжий образ з GHCR.
+  3. Запускаються міграції БД через одноразовий контейнер.
+  4. Перезапускається системна служба `mywebapp-container.service` (яка автоматично видаляє старий контейнер та запускає новий).
+* **Верифікація після розгортання:**
+  * Запускається скрипт `scripts/verify-deploy.sh`, який перевіряє доступність API, прямий та зворотний проксі (перевірка блокування `/health` з боку Nginx) та створює тестову задачу.
+
+### Запуск інфраструктури локально (Vagrant)
+
+1. Підніміть обидві віртуальні машини:
+   ```bash
+   vagrant up
+   ```
+   *Машина `target` (192.168.56.10): 1 CPU, 1024 MB RAM (додаток, Nginx, Postgres).*
+   *Машина `runner` (192.168.56.20): 2 CPU, 2048 MB RAM (GitHub Runner).*
+
+2. Виконайте ручне налаштування авторизації SSH між машинами та зареєструйте ранер на GitHub за інструкцією:
+   👉 [runner-setup.md](file:///d:/KPI/2nd_year/DevOps-KPI/DevOps-KPI_Lab3/docs/runner-setup.md).
+
+### Демонстрація розгортання
+
+Для викатки нової версії додатку на сервер створіть анотований релізний тег:
+```bash
+git tag -a v1.0.0 -m "Release version 1.0.0"
+git push origin --tags
+```
+Відстежуйте виконання CD-процесу в інтерфейсі GitHub Actions. Після успішного завершення додаток буде доступний за адресою `http://localhost:8080` (хост-порт 8080 проброшено на порт 80 ВМ `target`).
+
+
