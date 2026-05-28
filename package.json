@@ -8,7 +8,9 @@
 		"start": "node src/index.js",
 		"migrate": "node src/migrate.js",
 		"lint": "eslint src/",
-		"lint:fix": "eslint src/ --fix"
+		"lint:fix": "eslint src/ --fix",
+		"lint:docker": "hadolint Dockerfile",
+		"lint:shell": "shellcheck scripts/*.sh deploy/*.sh"
 	},
 	"dependencies": {
 		"pg": "^8.16.0",

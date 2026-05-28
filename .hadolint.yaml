@@ -1,0 +1,3 @@
+# Hadolint configuration file
+ignored:
+  - DL3018 # Ignore pin versions in apk add (common for lightweight Alpine containers)
