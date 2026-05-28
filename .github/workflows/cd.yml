@@ -1,0 +1,24 @@
+name: CD
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to target node
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          echo "Deploying version ${TAG} to target node..."
+          # Execute deploy.sh on target node via SSH as mywebapp user
+          ssh mywebapp@192.168.56.10 'bash -s' < scripts/deploy.sh "${TAG}"
+
+      - name: Verify deployment
+        run: |
+          echo "Running post-deploy verification..."
+          bash scripts/verify-deploy.sh 192.168.56.10
