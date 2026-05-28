@@ -21,12 +21,19 @@ apt-get update -qq
 apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 echo "==> Configuring users"
-# System user for running the application container
+# User mywebapp with shell and home directory for SSH access from runner
 if ! id mywebapp &>/dev/null; then
-  useradd -r -s /usr/sbin/nologin mywebapp
+  useradd -m -s /bin/bash mywebapp
 fi
 # Add mywebapp to docker group to run docker commands without sudo
 usermod -aG docker mywebapp
+
+# Prepare SSH directory for mywebapp user
+mkdir -p /home/mywebapp/.ssh
+chmod 700 /home/mywebapp/.ssh
+touch /home/mywebapp/.ssh/authorized_keys
+chmod 600 /home/mywebapp/.ssh/authorized_keys
+chown -R mywebapp:mywebapp /home/mywebapp/.ssh
 
 # Student, teacher, operator users
 for u in student teacher; do
