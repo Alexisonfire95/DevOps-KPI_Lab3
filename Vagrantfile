@@ -1,6 +1,6 @@
 Vagrant.configure("2") do |config|
   config.vm.define "target" do |target|
-    target.vm.box = "ubuntu/noble64"
+    target.vm.box = "bento/ubuntu-24.04"
     target.vm.hostname = "target-node"
     target.vm.network "private_network", ip: "192.168.56.10"
     target.vm.network "forwarded_port", guest: 80, host: 8080
@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "runner" do |runner|
-    runner.vm.box = "ubuntu/noble64"
+    runner.vm.box = "bento/ubuntu-24.04"
     runner.vm.hostname = "github-runner"
     runner.vm.network "private_network", ip: "192.168.56.20"
     runner.vm.provision "shell", path: "scripts/provision-runner.sh"
