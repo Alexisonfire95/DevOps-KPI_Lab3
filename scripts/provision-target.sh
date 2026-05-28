@@ -55,6 +55,10 @@ fi
 echo "operator ALL=(root) NOPASSWD: /bin/systemctl start mywebapp-container, /bin/systemctl stop mywebapp-container, /bin/systemctl restart mywebapp-container, /bin/systemctl status mywebapp-container, /bin/systemctl reload nginx" >/etc/sudoers.d/operator
 chmod 440 /etc/sudoers.d/operator
 
+# Allow mywebapp user to restart and check mywebapp-container service (for SSH deployments)
+echo "mywebapp ALL=(root) NOPASSWD: /bin/systemctl start mywebapp-container, /bin/systemctl stop mywebapp-container, /bin/systemctl restart mywebapp-container, /bin/systemctl status mywebapp-container, /bin/systemctl is-active mywebapp-container" >/etc/sudoers.d/mywebapp
+chmod 440 /etc/sudoers.d/mywebapp
+
 echo "==> Configuring PostgreSQL"
 systemctl start postgresql
 sudo -u postgres psql -v ON_ERROR_STOP=1 <<EOSQL
