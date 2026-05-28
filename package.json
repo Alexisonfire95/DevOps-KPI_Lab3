@@ -6,10 +6,16 @@
 	"packageManager": "pnpm@10.32.1",
 	"scripts": {
 		"start": "node src/index.js",
-		"migrate": "node src/migrate.js"
+		"migrate": "node src/migrate.js",
+		"lint": "eslint src/",
+		"lint:fix": "eslint src/ --fix"
 	},
 	"dependencies": {
 		"pg": "^8.16.0",
 		"yaml": "^2.8.0"
+	},
+	"devDependencies": {
+		"@eslint/js": "^10.0.1",
+		"eslint": "^10.4.0"
 	}
 }
