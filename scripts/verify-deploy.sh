@@ -5,7 +5,6 @@ TARGET_IP="${1:-192.168.56.10}"
 
 echo "==> Starting post-deploy verification for target: ${TARGET_IP}"
 
-# 1. Verify /tasks endpoint returns 200 OK via Nginx (port 80)
 echo "1. Checking /tasks endpoint accessibility via Nginx..."
 TASKS_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://${TARGET_IP}/tasks")
 if [ "$TASKS_STATUS" -eq 200 ]; then
@@ -15,7 +14,6 @@ else
   exit 1
 fi
 
-# 2. Verify direct /health/alive check on port 5200 returns 200 OK
 echo "2. Checking direct /health/alive on port 5200..."
 ALIVE_BODY=$(curl -sf "http://${TARGET_IP}:5200/health/alive")
 if [ "$ALIVE_BODY" = "OK" ]; then
@@ -25,7 +23,6 @@ else
   exit 1
 fi
 
-# 3. Verify Nginx blocks /health/alive (returns 404)
 echo "3. Checking if Nginx blocks /health/alive..."
 NGINX_HEALTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://${TARGET_IP}/health/alive")
 if [ "$NGINX_HEALTH_STATUS" -eq 404 ]; then
@@ -35,7 +32,6 @@ else
   exit 1
 fi
 
-# 4. Verify Task Lifecycle (Create task and check it is listed)
 echo "4. Testing Task Lifecycle (Create & Read task)..."
 TASK_TITLE="verification-task-$(date +%s)"
 echo "   Creating task: '${TASK_TITLE}'"
@@ -46,7 +42,6 @@ CREATE_RESPONSE=$(curl -sf -X POST \
   -d "{\"title\":\"${TASK_TITLE}\"}" \
   "http://${TARGET_IP}/tasks")
 
-# Parse ID from JSON response
 TASK_ID=$(echo "$CREATE_RESPONSE" | jq -r '.id')
 
 if [ -n "$TASK_ID" ] && [ "$TASK_ID" != "null" ]; then
@@ -59,7 +54,6 @@ fi
 echo "   Retrieving task list to verify task exists..."
 LIST_RESPONSE=$(curl -sf -H "Accept: application/json" "http://${TARGET_IP}/tasks")
 
-# Check if the title exists in the retrieved tasks list
 if echo "$LIST_RESPONSE" | jq -e ".[] | select(.title == \"${TASK_TITLE}\")" >/dev/null; then
   echo "   [OK] Task successfully found in the tasks list!"
 else

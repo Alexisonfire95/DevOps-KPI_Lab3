@@ -23,7 +23,6 @@ export class IntegrationContext {
 	configPath = "";
 
 	async setup() {
-		// Start Postgres container
 		this.pgContainer = await new GenericContainer(POSTGRES_IMAGE)
 			.withEnvironment({
 				POSTGRES_DB: this.dbName,
@@ -45,7 +44,6 @@ export class IntegrationContext {
 		this.apiPort = await getFreePort();
 		this.baseUrl = `http://127.0.0.1:${this.apiPort}`;
 
-		// Create a temporary YAML config file for this test run
 		this.configPath = path.join(repoRoot, `temp-config-${this.apiPort}.yaml`);
 		const yamlConfig = `
 server:
@@ -60,7 +58,6 @@ database:
 `;
 		fs.writeFileSync(this.configPath, yamlConfig, "utf8");
 
-		// Run migrations using the temp config path
 		const migrateResult = spawnSync(
 			process.execPath,
 			["src/migrate.js"],
@@ -77,7 +74,6 @@ database:
 			throw new Error(`migrate failed (exit ${migrateResult.status}): ${err}`);
 		}
 
-		// Spawn the app server using the temp config path
 		this.appProcess = spawn(
 			process.execPath,
 			["src/index.js"],
@@ -118,9 +114,7 @@ database:
 			try {
 				const res = await fetch(`${this.baseUrl}/health/alive`);
 				if (res.ok) return;
-			} catch {
-				// still starting
-			}
+			} catch {}
 			await delay(250);
 		}
 		throw new Error("Server startup timeout (health/alive)");
@@ -157,9 +151,7 @@ database:
 		if (this.configPath && fs.existsSync(this.configPath)) {
 			try {
 				fs.unlinkSync(this.configPath);
-			} catch {
-				// ignore
-			}
+			} catch {}
 		}
 	}
 }

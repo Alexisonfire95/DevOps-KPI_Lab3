@@ -21,21 +21,17 @@ apt-get update -qq
 apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 echo "==> Configuring users"
-# User mywebapp with shell and home directory for SSH access from runner
 if ! id mywebapp &>/dev/null; then
   useradd -m -s /bin/bash mywebapp
 fi
-# Add mywebapp to docker group to run docker commands without sudo
 usermod -aG docker mywebapp
 
-# Prepare SSH directory for mywebapp user
 mkdir -p /home/mywebapp/.ssh
 chmod 700 /home/mywebapp/.ssh
 touch /home/mywebapp/.ssh/authorized_keys
 chmod 600 /home/mywebapp/.ssh/authorized_keys
 chown -R mywebapp:mywebapp /home/mywebapp/.ssh
 
-# Student, teacher, operator users
 for u in student teacher; do
   if ! id "$u" &>/dev/null; then
     useradd -m -s /bin/bash "$u"
@@ -51,11 +47,9 @@ if ! id operator &>/dev/null; then
   chage -d 0 operator
 fi
 
-# Allow operator to restart mywebapp-container systemd service and reload nginx
 echo "operator ALL=(root) NOPASSWD: /bin/systemctl start mywebapp-container, /bin/systemctl stop mywebapp-container, /bin/systemctl restart mywebapp-container, /bin/systemctl status mywebapp-container, /bin/systemctl reload nginx" >/etc/sudoers.d/operator
 chmod 440 /etc/sudoers.d/operator
 
-# Allow mywebapp user to restart and check mywebapp-container service (for SSH deployments)
 echo "mywebapp ALL=(root) NOPASSWD: /bin/systemctl start mywebapp-container, /bin/systemctl stop mywebapp-container, /bin/systemctl restart mywebapp-container, /bin/systemctl status mywebapp-container, /bin/systemctl is-active mywebapp-container" >/etc/sudoers.d/mywebapp
 chmod 440 /etc/sudoers.d/mywebapp
 
@@ -92,7 +86,6 @@ server {
   access_log /var/log/nginx/mywebapp.access.log;
   error_log  /var/log/nginx/mywebapp.error.log;
 
-  # Block health endpoints
   location = /health {
     return 404;
   }
@@ -124,7 +117,6 @@ echo "==> Creating student gradebook"
 echo "1" >/home/student/gradebook
 chown student:student /home/student/gradebook
 
-# Lock vagrant user password for security
 passwd -l vagrant 2>/dev/null || true
 
 echo "==> Target node provisioning finished successfully."

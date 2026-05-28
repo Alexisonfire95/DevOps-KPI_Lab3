@@ -1,5 +1,4 @@
 Vagrant.configure("2") do |config|
-  # Target Node: Runs the application inside Docker container, proxy by Nginx
   config.vm.define "target" do |target|
     target.vm.box = "ubuntu/noble64"
     target.vm.hostname = "target-node"
@@ -12,7 +11,6 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  # Runner Node: Runs the GitHub Actions Self-Hosted Runner
   config.vm.define "runner" do |runner|
     runner.vm.box = "ubuntu/noble64"
     runner.vm.hostname = "github-runner"

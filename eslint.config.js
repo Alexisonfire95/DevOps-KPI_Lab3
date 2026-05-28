@@ -7,7 +7,6 @@ export default [
 			ecmaVersion: 2024,
 			sourceType: "module",
 			globals: {
-				// Define standard Node.js globals manually to avoid dependency on 'globals' package if possible
 				process: "readonly",
 				console: "readonly",
 				setTimeout: "readonly",

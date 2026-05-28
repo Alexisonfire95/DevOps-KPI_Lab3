@@ -25,11 +25,9 @@ if ! id runner &>/dev/null; then
 fi
 usermod -aG docker runner
 
-# Generate SSH keys for key-based authentication with target node
 sudo -u runner mkdir -p /home/runner/.ssh
 sudo -u runner ssh-keygen -t ed25519 -N "" -f /home/runner/.ssh/id_ed25519
 
-# Configure SSH client to disable host key checks for the target IP
 sudo -u runner cat > /home/runner/.ssh/config <<EOF
 Host 192.168.56.10
   StrictHostKeyChecking no

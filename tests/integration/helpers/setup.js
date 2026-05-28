@@ -1,6 +1,5 @@
 import { IntegrationContext } from "./integration-context.js";
 
-/** @type {IntegrationContext | null} */
 let globalContext = null;
 
 export function getGlobalTestContext() {
