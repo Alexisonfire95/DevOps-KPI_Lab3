@@ -1,12 +1,26 @@
 Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/jammy64"
-  config.ssh.insert_key = false
-  config.vm.network "forwarded_port", guest: 80, host: 8080
-  config.vm.synced_folder ".", "/vagrant"
-  config.vm.provision "shell", path: "scripts/provision.sh"
-  config.vm.provider "virtualbox" do |vb|
-    vb.gui = false
-    vb.memory = "1024"
-    vb.cpus = 1
+  # Target Node: Runs the application inside Docker container, proxy by Nginx
+  config.vm.define "target" do |target|
+    target.vm.box = "ubuntu/noble64"
+    target.vm.hostname = "target-node"
+    target.vm.network "private_network", ip: "192.168.56.10"
+    target.vm.network "forwarded_port", guest: 80, host: 8080
+    target.vm.provision "shell", path: "scripts/provision-target.sh"
+    target.vm.provider "virtualbox" do |vb|
+      vb.memory = 1024
+      vb.cpus = 1
+    end
+  end
+
+  # Runner Node: Runs the GitHub Actions Self-Hosted Runner
+  config.vm.define "runner" do |runner|
+    runner.vm.box = "ubuntu/noble64"
+    runner.vm.hostname = "github-runner"
+    runner.vm.network "private_network", ip: "192.168.56.20"
+    runner.vm.provision "shell", path: "scripts/provision-runner.sh"
+    runner.vm.provider "virtualbox" do |vb|
+      vb.memory = 2048
+      vb.cpus = 2
+    end
   end
 end
