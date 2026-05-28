@@ -31,7 +31,13 @@ export class IntegrationContext {
 				POSTGRES_PASSWORD: this.dbPassword
 			})
 			.withExposedPorts(5432)
-			.withWaitStrategy(Wait.forLogMessage(/database system is ready to accept connections/i))
+			.withHealthCheck({
+				test: ["CMD-SHELL", `pg_isready -U ${this.dbUser} -d ${this.dbName}`],
+				interval: 1000,
+				timeout: 3000,
+				retries: 15
+			})
+			.withWaitStrategy(Wait.forHealthCheck())
 			.start();
 
 		this.dbHost = this.pgContainer.getHost();
