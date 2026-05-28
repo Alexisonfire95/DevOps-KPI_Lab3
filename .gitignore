@@ -1,0 +1,10 @@
+/.idea
+/.bruno
+/.vagrant
+/.pnpm-store
+/node_modules
+**/node_modules
+*.log
+.env
+*.pdf
+*.txt

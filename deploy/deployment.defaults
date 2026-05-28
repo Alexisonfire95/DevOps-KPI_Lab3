@@ -1,0 +1,15 @@
+export DEPLOY_UNIT=mywebapp
+export DEPLOY_APP_USER=mywebapp
+export DEPLOY_APP_DIR=/opt/mywebapp
+export DEPLOY_APP_CONFIG=/etc/mywebapp
+export DEPLOY_APP_CONFIG_FILE=/etc/mywebapp/config.yaml
+export DEPLOY_APP_PORT=5200
+export DEPLOY_APP_BIND=127.0.0.1
+
+export DEPLOY_DB_HOST=127.0.0.1
+export DEPLOY_DB_PORT=5432
+export DEPLOY_DB_USER=mywebapp
+export DEPLOY_DB_NAME=mywebapp
+
+export DEPLOY_NGINX_ACCESS_LOG=/var/log/nginx/${DEPLOY_UNIT}.access.log
+export DEPLOY_NGINX_ERROR_LOG=/var/log/nginx/${DEPLOY_UNIT}.error.log

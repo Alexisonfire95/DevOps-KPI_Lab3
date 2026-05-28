@@ -1,0 +1,35 @@
+upstream ${DEPLOY_UNIT}_backend {
+  server ${DEPLOY_APP_BIND}:${DEPLOY_APP_PORT};
+  keepalive 32;
+}
+
+server {
+  listen 80 default_server;
+  listen [::]:80 default_server;
+  server_name _;
+  server_tokens off;
+
+  access_log ${DEPLOY_NGINX_ACCESS_LOG};
+  error_log  ${DEPLOY_NGINX_ERROR_LOG};
+
+  location = /health {
+    return 404;
+  }
+
+  location ^~ /health/ {
+    return 404;
+  }
+
+  location / {
+    proxy_pass http://${DEPLOY_UNIT}_backend;
+    proxy_http_version 1.1;
+    proxy_set_header Connection "";
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_connect_timeout 60s;
+    proxy_send_timeout 60s;
+    proxy_read_timeout 60s;
+  }
+}

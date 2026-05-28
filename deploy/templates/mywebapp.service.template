@@ -1,0 +1,32 @@
+[Unit]
+Description=${DEPLOY_UNIT} (Task Tracker)
+BindsTo=${DEPLOY_UNIT}.socket
+After=network.target postgresql.service ${DEPLOY_UNIT}.socket
+
+[Service]
+Type=simple
+User=${DEPLOY_APP_USER}
+Group=${DEPLOY_APP_USER}
+WorkingDirectory=${DEPLOY_APP_DIR}
+Environment=NODE_ENV=production
+Environment=DEPLOY_APP_DIR=${DEPLOY_APP_DIR}
+Environment=CONFIG_PATH=${DEPLOY_APP_CONFIG_FILE}
+
+SyslogIdentifier=${DEPLOY_UNIT}
+
+ExecStartPre=${DEPLOY_APP_DIR}/launch.sh migrate
+ExecStart=${DEPLOY_APP_DIR}/launch.sh socket
+
+Restart=on-failure
+RestartSec=3
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+NoNewPrivileges=yes
+ProtectSystem=full
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+
+[Install]
+WantedBy=multi-user.target

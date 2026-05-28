@@ -1,0 +1,11 @@
+[Unit]
+Description=${DEPLOY_UNIT} (Task Tracker)
+
+[Socket]
+ListenStream=${DEPLOY_APP_BIND}:${DEPLOY_APP_PORT}
+Accept=no
+NoDelay=true
+Backlog=1024
+
+[Install]
+WantedBy=sockets.target

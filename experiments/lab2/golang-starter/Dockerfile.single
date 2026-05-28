@@ -1,0 +1,12 @@
+FROM golang:1.24-bookworm
+
+WORKDIR /src
+
+COPY . .
+
+RUN go mod download && \
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /usr/local/bin/fizzbuzz .
+
+EXPOSE 8080
+
+CMD ["/usr/local/bin/fizzbuzz", "serve"]

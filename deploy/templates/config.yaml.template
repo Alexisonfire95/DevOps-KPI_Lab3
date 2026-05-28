@@ -1,0 +1,10 @@
+server:
+  host: ${DEPLOY_APP_BIND}
+  port: ${DEPLOY_APP_PORT}
+
+database:
+  host: ${DEPLOY_DB_HOST}
+  port: ${DEPLOY_DB_PORT}
+  user: ${DEPLOY_DB_USER}
+  password: ${DB_PASSWORD}
+  name: ${DEPLOY_DB_NAME}

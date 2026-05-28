@@ -1,0 +1,14 @@
+node_modules
+.git
+.vagrant
+experiments
+docs
+*.log
+*.pdf
+*.txt
+Vagrantfile
+README.md
+docker-compose.yml
+.nvmrc
+.gitattributes
+.gitignore

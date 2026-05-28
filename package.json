@@ -1,0 +1,15 @@
+{
+	"name": "devops-kpi",
+	"version": "1.0.0",
+	"description": "Task Tracker (mywebapp) — DevOps KPI Lab 1",
+	"type": "module",
+	"packageManager": "pnpm@10.32.1",
+	"scripts": {
+		"start": "node src/index.js",
+		"migrate": "node src/migrate.js"
+	},
+	"dependencies": {
+		"pg": "^8.16.0",
+		"yaml": "^2.8.0"
+	}
+}

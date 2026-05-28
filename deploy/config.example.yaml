@@ -1,0 +1,10 @@
+server:
+  host: 127.0.0.1
+  port: 5200
+
+database:
+  host: 127.0.0.1
+  port: 5432
+  user: mywebapp
+  password: change_me
+  name: mywebapp

@@ -1,0 +1,6 @@
+* text=auto
+
+*.sh text eol=lf
+*.defaults text eol=lf
+deploy/templates/* text eol=lf
+Vagrantfile text eol=lf
