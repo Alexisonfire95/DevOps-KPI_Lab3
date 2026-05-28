@@ -10,7 +10,9 @@
 		"lint": "eslint src/",
 		"lint:fix": "eslint src/ --fix",
 		"lint:docker": "hadolint Dockerfile",
-		"lint:shell": "shellcheck scripts/*.sh deploy/*.sh"
+		"lint:shell": "shellcheck scripts/*.sh deploy/*.sh",
+		"test": "node --test \"tests/unit/*.test.js\"",
+		"test:coverage": "c8 --check-coverage --lines 40 --reporter=text --reporter=html node --test \"tests/unit/*.test.js\""
 	},
 	"dependencies": {
 		"pg": "^8.16.0",
@@ -18,6 +20,7 @@
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
+		"c8": "^11.0.0",
 		"eslint": "^10.4.0"
 	}
 }

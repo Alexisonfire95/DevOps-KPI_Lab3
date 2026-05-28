@@ -8,3 +8,4 @@
 .env
 *.pdf
 *.txt
+/coverage
