@@ -14,6 +14,7 @@ docker pull "${IMAGE_NAME}"
 
 echo "==> Running database migrations inside temporary container"
 docker run --rm \
+  --entrypoint "" \
   --network host \
   -v /etc/mywebapp:/etc/mywebapp:ro \
   -e CONFIG_PATH=/etc/mywebapp/config.yaml \

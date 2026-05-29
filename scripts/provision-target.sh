@@ -118,6 +118,22 @@ echo "==> Creating student gradebook"
 echo "1" >/home/student/gradebook
 chown student:student /home/student/gradebook
 
+echo "==> Creating application configuration"
+mkdir -p /etc/mywebapp
+cat > /etc/mywebapp/config.yaml << 'EOF'
+server:
+  host: 127.0.0.1
+  port: 5200
+
+database:
+  host: 127.0.0.1
+  port: 5432
+  user: mywebapp
+  password: mywebapp_secret_change_me
+  name: mywebapp
+EOF
+chmod 644 /etc/mywebapp/config.yaml
+
 passwd -l vagrant 2>/dev/null || true
 
 echo "==> Target node provisioning finished successfully."

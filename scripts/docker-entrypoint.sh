@@ -27,13 +27,12 @@ fi
 
 export CONFIG_PATH
 
-# Wait for DB to become available
-node scripts/wait-for-db.js
-
-# Run migrations
-echo "Running migrations..."
-node src/migrate.js
-
-# Start application
-echo "Starting application..."
-exec node src/index.js
+if [ "$#" -eq 0 ]; then
+  node scripts/wait-for-db.js
+  echo "Running migrations..."
+  node src/migrate.js
+  echo "Starting application..."
+  exec node src/index.js
+else
+  exec "$@"
+fi
