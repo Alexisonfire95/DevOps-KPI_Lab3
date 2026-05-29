@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC1091
 set -euo pipefail
 
 export DEBIAN_FRONTEND=noninteractive
