@@ -1,0 +1,21 @@
+[Unit]
+Description=mywebapp container
+After=docker.service postgresql.service
+Requires=docker.service
+
+[Service]
+Type=simple
+User=mywebapp
+ExecStartPre=-/usr/bin/docker rm -f mywebapp-app
+ExecStart=/usr/bin/docker run --rm --name mywebapp-app \
+  --network host \
+  -v /etc/mywebapp:/etc/mywebapp:ro \
+  -e CONFIG_PATH=/etc/mywebapp/config.yaml \
+  -e NODE_ENV=production \
+  ghcr.io/alexisonfire95/devops-kpi_lab3:stable
+ExecStop=/usr/bin/docker stop mywebapp-app
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

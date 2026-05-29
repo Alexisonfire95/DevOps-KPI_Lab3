@@ -26,7 +26,7 @@ export function createApp(pool) {
 
 	return {
 		start(target) {
-			return new Promise((resolve, reject) => {
+			return new Promise((resolve) => {
 				if (typeof target === "object" && target !== null && "fd" in target) {
 					server.listen({ fd: target.fd }, () => resolve())
 					return
