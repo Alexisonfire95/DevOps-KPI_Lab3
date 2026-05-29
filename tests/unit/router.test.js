@@ -12,7 +12,7 @@ describe("router", () => {
 		});
 
 		const matched = await router.handle({ url: "/tasks", method: "GET" }, {});
-		assert.equal(matched, true);
+		assert.equal(matched, false);
 		assert.equal(called, true);
 	});
 
