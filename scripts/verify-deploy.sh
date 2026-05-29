@@ -15,7 +15,7 @@ else
 fi
 
 echo "2. Checking direct /health/alive on port 5200..."
-ALIVE_BODY=$(curl -sf "http://${TARGET_IP}:5200/health/alive")
+ALIVE_BODY=$(ssh -o StrictHostKeyChecking=no mywebapp@"${TARGET_IP}" "curl -sf http://127.0.0.1:5200/health/alive")
 if [ "$ALIVE_BODY" = "OK" ]; then
   echo "   [OK] Direct /health/alive returned 'OK'"
 else
