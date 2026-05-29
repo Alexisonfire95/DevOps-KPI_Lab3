@@ -3,7 +3,7 @@ Vagrant.configure("2") do |config|
     target.vm.box = "bento/ubuntu-24.04"
     target.vm.hostname = "target-node"
     target.vm.network "private_network", ip: "192.168.56.10"
-    target.vm.network "forwarded_port", guest: 80, host: 8080
+    target.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true
     target.vm.provision "shell", path: "scripts/provision-target.sh"
     target.vm.provider "virtualbox" do |vb|
       vb.memory = 1024
