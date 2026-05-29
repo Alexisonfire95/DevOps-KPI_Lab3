@@ -43,7 +43,7 @@ for u in student teacher; do
 done
 
 if ! id operator &>/dev/null; then
-  useradd -m -s /bin/bash operator
+  useradd -m -g operator -s /bin/bash operator
   echo "operator:$DEFAULT_PW" | chpasswd
   chage -d 0 operator
 fi
