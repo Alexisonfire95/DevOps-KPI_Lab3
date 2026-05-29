@@ -28,7 +28,7 @@ usermod -aG docker runner
 sudo -u runner mkdir -p /home/runner/.ssh
 sudo -u runner ssh-keygen -t ed25519 -N "" -f /home/runner/.ssh/id_ed25519
 
-sudo -u runner cat > /home/runner/.ssh/config <<EOF
+sudo -u runner tee /home/runner/.ssh/config >/dev/null <<EOF
 Host 192.168.56.10
   StrictHostKeyChecking no
   UserKnownHostsFile /dev/null
